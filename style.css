@@ -1,0 +1,239 @@
+
+html {
+  font-size: 62.5%;
+}
+.container {
+  width: 100%;
+  height: 100vh;
+  /* background-color: #12121f; */
+  /* color: #eee; */
+  display: flex;
+  /* justify-content: space-around; */
+  /* align-items: center; */
+}
+.left{
+  display: block;
+}
+.logo{
+  width: 100%;
+  height: 15rem;
+  background: #777;
+}
+div.logo:before {
+  content:url(http://placehold.it/550x150);
+}
+.cont {
+  width: 100%;
+  /* margin: 0 auto; */
+  background-color: #fff;
+  /* padding: 20px; */
+  /* box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3); */
+  /* border-radius: 5px; */
+}
+
+.today {
+  background-color: #167e56;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /* margin-top: 20px; */
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+.form-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+.form-container input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  width: 67px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-container button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.right{
+  display: block;
+  width: 600rem;
+}
+.years{
+  display: flex;
+  height: 5rem;
+  /* width: 100%; */
+  border: 2px solid black;
+}
+.years div {
+  font-size: 5rem;
+  width: 200rem;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+  transition: background-color 0.2s;
+}
+
+.weeks{
+  display: flex;
+  height: 3.779rem;
+  width: 100%;
+  border: 2px solid black;
+}
+.weeks div {
+  font-size: 1.4rem;
+  width: 3.645rem;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+  transition: background-color 0.2s;
+
+}
+.months{
+  display: flex;
+  height: 5rem;
+  width: 100%;
+  border: 2px solid black;
+}
+.months div {
+  font-size: 3rem;
+  width: calc(197.5rem / 12);
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+  transition: background-color 0.2s;
+
+}
+.ganttop{
+  height: 3.2rem;
+  width: 100%;
+  background: rgb(240, 236, 236);
+  border: 1px solid black;
+}
+.taskduration{
+  display: block;
+}
+.taskduration div {
+  font-size: 3rem;
+  height: 4.14rem;
+  border: 0.5px solid black;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+  transition: background-color 0.2s;
+
+}
+
+.calendar {
+  width: 70rem;
+  height: 15rem;
+  border: 2px solid black;
+  /* border-radius: 5px; */
+  /* background-color: #222227; */
+  /* box-shadow: 0 0.5rem 3rem rgba(0, 0, 0, 0.4); */
+}
+
+.month {
+  width: 100%;
+  height: 8rem;
+  /* background-color: #167e56; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  text-align: center;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+}
+
+.month i {
+  font-size: 4rem;
+  cursor: pointer;
+}
+
+.month h1 {
+  font-size: 5rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  margin-bottom: 1rem;
+}
+
+.month p {
+  font-size: 3rem;
+}
+
+
+.weekdays {
+  width: 100%;
+  height: 5rem;
+  padding: 0 0.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.weekdays div {
+  font-size: 1.5rem;
+  font-weight: 440;
+  letter-spacing: 0.1rem;
+  width: calc(70rem / 7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+}
+
+.days {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+}
+
+.days div {
+  font-size: 1.4rem;
+  margin: 0.3rem;
+  width: calc(40.2rem / 7);
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5); */
+  transition: background-color 0.2s;
+}
+
+.days div:hover:not(.today) {
+  background-color: #262626;
+  border: 0.2rem solid #777;
+  cursor: pointer;
+}
+
+.prev-date,
+.next-date {
+  opacity: 0.5;
+}
