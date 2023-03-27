@@ -9,26 +9,68 @@ const todoList = document.getElementById('todo-list');
 		let todos = [];
 
 		function addTodo() {
-			const todo = {
-				wbs: wbsInput.value,
-				taskName: taskInput.value,
-				duration: durationInput.value,
-				start: startInput.value,
-				finish: finishInput.value
-			};
-
-			todos.push(todo);
-
+      const todo = {
+          wbs: wbsInput.value,
+          taskName: taskInput.value,
+          duration: durationInput.value,
+          start: startInput.value,
+          finish: finishInput.value
+      };
+  
+      todos.push(todo);
+  
+      // Add the taskduration row here
       const taskduration = document.querySelector('.taskduration');
       const taskdurationRow = document.createElement('div');
-      taskdurationRow.textContent = `1`;
-      taskdurationRow.dataset.index = todos.length - 1; // Add a custom data attribute
+      taskdurationRow.style.height = '100px';
       taskduration.appendChild(taskdurationRow);
+  
+      // Create the taskvis div and assign the event listeners for dragging
+      const taskvis = document.createElement('div');
+      taskvis.textContent = ``;
+      taskvis.style.backgroundColor = 'blue';
+      taskvis.style.height = '50%';
+      taskvis.style.width = '10rem';
+      taskvis.style.position = 'relative';
+      taskvis.style.cursor = 'pointer';
+      taskdurationRow.appendChild(taskvis);
+  
+      taskvis.addEventListener('mousedown', handleMouseDown);
+      taskvis.addEventListener('mousemove', handleMouseMove);
+      taskvis.addEventListener('mouseup', handleMouseUp);    
 
 			renderTodos();
 			resetInputs();
 
 		}
+
+    let isMouseDown = false;
+    let offsetX;
+    let currentDraggable;
+
+    function handleMouseDown(event) {
+      isMouseDown = true;
+      offsetX = event.clientX - event.target.getBoundingClientRect().left;
+      currentDraggable = event.target;
+    }
+  
+    function handleMouseUp() {
+      isMouseDown = false;
+      currentDraggable = null;
+    }
+
+    function handleMouseMove(event) {
+      if (isMouseDown && currentDraggable) {
+          const containerRect = currentDraggable.parentElement.parentElement.getBoundingClientRect();
+          let newX = event.clientX - offsetX;
+  
+          // Keep the div inside the container horizontally
+          newX = Math.max(newX, containerRect.left);
+          newX = Math.min(newX, containerRect.right - currentDraggable.clientWidth);
+  
+          currentDraggable.style.left = newX - containerRect.left + 'px';
+      }
+    }
 
 		function renderTodos() {
 			todoList.innerHTML = '';
