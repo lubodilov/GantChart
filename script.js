@@ -1,16 +1,19 @@
 const todoList = document.getElementById('todo-list');
 		const wbsInput = document.getElementById('wbs-input');
 		const taskInput = document.getElementById('task-input');
-		const durationInput = document.getElementById('duration-input');
+		//const durationInput = document.getElementById('duration-input');
 		const startInput = document.getElementById('start-input');
 		const finishInput = document.getElementById('finish-input');
 		const addTodoButton = document.getElementById('add-todo');
 
 		let todos = [];
+    let taskvisMap = new Map();
 
 		function addTodo() {
 
       const startDate = new Date(startInput.value);
+      const startWeekNumber = getWeekNumber(startDate);
+      const dayNumber = getDayOfYear(startDate);
       const finishDate = new Date(finishInput.value);
       const durationInMilliseconds = finishDate - startDate;
       const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
@@ -37,14 +40,21 @@ const todoList = document.getElementById('todo-list');
       taskvis.textContent = ``;
       taskvis.style.backgroundColor = 'blue';
       taskvis.style.height = '70%';
-      taskvis.style.width = `${3.645 * durationInWeeks}rem`; 
+      taskvis.style.width = `${3.645 * durationInDays / 7}rem`; 
       taskvis.style.position = 'relative';
+      taskvis.style.left = `${(dayNumber+7) * 3.645 / 7}rem`;
       taskvis.style.cursor = 'pointer';
       taskdurationRow.appendChild(taskvis);
   
       taskvis.addEventListener('mousedown', handleMouseDown);
       taskvis.addEventListener('mousemove', handleMouseMove);
-      taskvis.addEventListener('mouseup', handleMouseUp);    
+      taskvis.addEventListener('mouseup', handleMouseUp); 
+      
+      taskvisMap.set(todos.length - 1, {
+      taskvis: taskvis,
+      taskdurationRow: taskdurationRow
+      });
+
 
 			renderTodos();
 			resetInputs();
@@ -93,10 +103,6 @@ const todoList = document.getElementById('todo-list');
 				taskCell.innerText = todo.taskName;
 				row.appendChild(taskCell);
 
-				const durationCell = document.createElement('td');
-				durationCell.innerText = todo.duration;
-				row.appendChild(durationCell);
-
 				const startCell = document.createElement('td');
 				startCell.innerText = todo.start;
 				row.appendChild(startCell);
@@ -105,20 +111,27 @@ const todoList = document.getElementById('todo-list');
 				finishCell.innerText = todo.finish;
 				row.appendChild(finishCell);
 
+        const durationCell = document.createElement('td');
+				durationCell.innerText = todo.duration;
+				row.appendChild(durationCell);
+
 				const actionCell = document.createElement('td');
 
 				const deleteButton = document.createElement('button');
-				deleteButton.innerText = 'Delete';
-				deleteButton.addEventListener('click', () => {
-					todos.splice(index, 1);
-          const taskdurationRowToDelete = document.querySelector(`.taskduration div[data-index="${index}"]`);
-          if (taskdurationRowToDelete) {
-              taskdurationRowToDelete.remove();
+        deleteButton.innerText = 'Delete';
+        deleteButton.addEventListener('click', () => {
+          const elementsToRemove = taskvisMap.get(index);
+          if (elementsToRemove) {
+            elementsToRemove.taskvis.remove();
+            elementsToRemove.taskdurationRow.remove();
+            taskvisMap.delete(index);
           }
-					renderTodos();
-          
-				});
-				actionCell.appendChild(deleteButton);
+
+          // Update the todos array and re-render
+          todos.splice(index, 1);
+          renderTodos();
+        });
+        actionCell.appendChild(deleteButton);
 
 				row.appendChild(actionCell);
 
@@ -171,5 +184,19 @@ monthNames.forEach((month, index) => {
 
     monthsDiv.appendChild(monthDiv);
 });
+
+function getWeekNumber(date) {
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const dayOffset = (date.getTime() - firstDayOfYear.getTime()) / (1000 * 60 * 60 * 24);
+  const weekNumber = Math.ceil((dayOffset + firstDayOfYear.getDay() + 1) / 7);
+  return weekNumber;
+}
+
+function getDayOfYear(date) {
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const dayOffset = (date.getTime() - firstDayOfYear.getTime()) / (1000 * 60 * 60 * 24);
+  const dayNumber = Math.floor(dayOffset) + 1;
+  return dayNumber;
+}
 
 const date = new Date();
