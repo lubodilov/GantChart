@@ -9,10 +9,17 @@ const todoList = document.getElementById('todo-list');
 		let todos = [];
 
 		function addTodo() {
+
+      const startDate = new Date(startInput.value);
+      const finishDate = new Date(finishInput.value);
+      const durationInMilliseconds = finishDate - startDate;
+      const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
+      const durationInWeeks = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24 * 7));
+
       const todo = {
           wbs: wbsInput.value,
           taskName: taskInput.value,
-          duration: durationInput.value,
+          duration: durationInDays,
           start: startInput.value,
           finish: finishInput.value
       };
@@ -22,15 +29,15 @@ const todoList = document.getElementById('todo-list');
       // Add the taskduration row here
       const taskduration = document.querySelector('.taskduration');
       const taskdurationRow = document.createElement('div');
-      taskdurationRow.style.height = '100px';
+      taskdurationRow.style.height = '4.14rem';
       taskduration.appendChild(taskdurationRow);
   
       // Create the taskvis div and assign the event listeners for dragging
       const taskvis = document.createElement('div');
       taskvis.textContent = ``;
       taskvis.style.backgroundColor = 'blue';
-      taskvis.style.height = '50%';
-      taskvis.style.width = '10rem';
+      taskvis.style.height = '70%';
+      taskvis.style.width = `${3.645 * durationInWeeks}rem`; 
       taskvis.style.position = 'relative';
       taskvis.style.cursor = 'pointer';
       taskdurationRow.appendChild(taskvis);
