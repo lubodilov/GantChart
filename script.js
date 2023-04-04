@@ -72,8 +72,42 @@ const todoList = document.getElementById('todo-list');
     }
   
     function handleMouseUp() {
-      isMouseDown = false;
-      currentDraggable = null;
+      if (isMouseDown && currentDraggable) {
+        const containerRect = currentDraggable.parentElement.getBoundingClientRect();
+        const draggableRect = currentDraggable.getBoundingClientRect();
+        const newDistancePx = draggableRect.left - containerRect.left;
+        const newDistanceRem = pxToRem(newDistancePx);
+    
+        const distDays = newDistanceRem / (3.645 / 7);
+    
+        // Find the index of the task corresponding to the currentDraggable element
+        const taskIndex = Array.from(currentDraggable.parentElement.children).indexOf(currentDraggable);
+    
+        // Update the start and finish dates for the task
+        const task = todos[taskIndex];
+        const newStartDate = new Date(task.start);
+        const dayNumber = getDayOfYear(newStartDate);
+        const dist = (dayNumber+7) * 3.645 / 7;
+        newStartDate.setDate(newStartDate.getDate() - (dist - distDays));
+    
+        const newFinishDate = new Date(task.finish);
+        newFinishDate.setDate(newFinishDate.getDate() - (dist - distDays));
+    
+        task.start = newStartDate.toISOString().split('T')[0];
+        task.finish = newFinishDate.toISOString().split('T')[0];
+    
+        // Re-render the table with the updated task data
+        renderTodos();
+    
+        isMouseDown = false;
+        currentDraggable = null;
+      }
+    }
+    
+
+    function pxToRem(pixels) {
+      const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      return pixels / rootFontSize;
     }
 
     function handleMouseMove(event) {
