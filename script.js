@@ -87,7 +87,7 @@ const todoList = document.getElementById('todo-list');
         const task = todos[taskIndex];
         const newStartDate = new Date(task.start);
         const dayNumber = getDayOfYear(newStartDate);
-        const dist = (dayNumber+7) * 3.645 / 7;
+        const dist = (dayNumber+0);
         newStartDate.setDate(newStartDate.getDate() - (dist - distDays));
     
         const newFinishDate = new Date(task.finish);
@@ -213,7 +213,8 @@ monthNames.forEach((month, index) => {
     
     monthDiv.id = `month${index + 1}`;
     monthDiv.setAttribute('name', month);
-    
+
+    //monthDiv.width = `${16.45}rem`;
     monthDiv.textContent = month;
 
     monthsDiv.appendChild(monthDiv);
