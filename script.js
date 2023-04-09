@@ -6,18 +6,18 @@ const todoList = document.getElementById('todo-list');
 		const finishInput = document.getElementById('finish-input');
 		const addTodoButton = document.getElementById('add-todo');
 
+    //let selectedTaskIndex = null;
 		let todos = [];
     let taskvisMap = new Map();
+
 
 		function addTodo() {
 
       const startDate = new Date(startInput.value);
-      const startWeekNumber = getWeekNumber(startDate);
       const dayNumber = getDayOfYear(startDate);
       const finishDate = new Date(finishInput.value);
       const durationInMilliseconds = finishDate - startDate;
       const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
-      const durationInWeeks = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24 * 7));
 
       const todo = {
           wbs: wbsInput.value,
@@ -48,8 +48,8 @@ const todoList = document.getElementById('todo-list');
   
       taskvis.addEventListener('mousedown', handleMouseDown);
       taskvis.addEventListener('mousemove', handleMouseMove);
-      taskvis.addEventListener('mouseup', handleMouseUp); 
-      
+      taskvis.addEventListener('mouseup', handleMouseUp);
+
       taskvisMap.set(todos.length - 1, {
       taskvis: taskvis,
       taskdurationRow: taskdurationRow
@@ -69,9 +69,10 @@ const todoList = document.getElementById('todo-list');
       isMouseDown = true;
       offsetX = event.clientX - event.target.getBoundingClientRect().left;
       currentDraggable = event.target;
+      //event.target.setPointerCapture(event.pointerId);
     }
   
-    function handleMouseUp() {
+    function handleMouseUp(event) {
       if (isMouseDown && currentDraggable) {
         const containerRect = currentDraggable.parentElement.getBoundingClientRect();
         const draggableRect = currentDraggable.getBoundingClientRect();
@@ -81,13 +82,20 @@ const todoList = document.getElementById('todo-list');
         const distDays = newDistanceRem / (3.645 / 7);
     
         // Find the index of the task corresponding to the currentDraggable element
-        const taskIndex = Array.from(currentDraggable.parentElement.children).indexOf(currentDraggable);
+        const taskIndex = Array.from(taskvisMap.keys()).find(
+          (key) => taskvisMap.get(key).taskvis === currentDraggable
+        );
+    
+        if (taskIndex === undefined) {
+          console.error('Unable to find task index for the currentDraggable element:', currentDraggable);
+          return;
+        }
     
         // Update the start and finish dates for the task
         const task = todos[taskIndex];
         const newStartDate = new Date(task.start);
         const dayNumber = getDayOfYear(newStartDate);
-        const dist = (dayNumber+0);
+        const dist = (dayNumber + 0);
         newStartDate.setDate(newStartDate.getDate() - (dist - distDays));
     
         const newFinishDate = new Date(task.finish);
@@ -102,7 +110,7 @@ const todoList = document.getElementById('todo-list');
         isMouseDown = false;
         currentDraggable = null;
       }
-    }
+    }    
     
 
     function pxToRem(pixels) {
@@ -169,21 +177,114 @@ const todoList = document.getElementById('todo-list');
 
 				row.appendChild(actionCell);
 
+        row.addEventListener('click', () => {
+          // Deselect the previously selected task if any
+          if (selectedTaskIndex !== null) {
+            todoList.children[selectedTaskIndex].classList.remove('selected');
+          }
+    
+          // Select the current task and highlight the row
+          selectedTaskIndex = index;
+          row.classList.add('selected');
+        });
 				todoList.appendChild(row);
 			});
 		}
-
 		function resetInputs() {
 			wbsInput.value = '';
 			taskInput.value = '';
-			durationInput.value = '';
+			//durationInput.value = '';
 			startInput.value = '';
 			finishInput.value = '';
 		}
 
 		addTodoButton.addEventListener('click', addTodo);
 
+    const addSubtaskButton = document.getElementById('add-subtask');
+    addSubtaskButton.addEventListener('click', addSubtask);
 
+    let selectedTaskIndex = null;
+
+    function addSubtaskDurationRow(parentTaskDurationRow, subtask) {
+      const subtaskDurationRow = document.createElement('div');
+      subtaskDurationRow.style.height = '4.14rem';
+      parentTaskDurationRow.parentElement.insertBefore(subtaskDurationRow, parentTaskDurationRow.nextSibling);
+    
+      const startDate = new Date(subtask.start);
+      const dayNumber = getDayOfYear(startDate);
+      const finishDate = new Date(subtask.finish);
+      const durationInMilliseconds = finishDate - startDate;
+      const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
+
+      const subtaskVis = document.createElement('div');
+      subtaskVis.textContent = '';
+      subtaskVis.style.backgroundColor = 'green';
+      subtaskVis.style.height = '70%';
+      subtaskVis.style.width = `${3.645 * durationInDays / 7}rem`; // Calculate the width based on the subtask duration
+      subtaskVis.style.position = 'relative';
+      subtaskVis.style.left = `${(dayNumber + 7) * 3.645 / 7}rem`;
+      subtaskVis.style.cursor = 'pointer';
+      subtaskDurationRow.appendChild(subtaskVis);
+    
+      subtaskVis.addEventListener('mousedown', handleMouseDown);
+      subtaskVis.addEventListener('mousemove', handleMouseMove);
+      subtaskVis.addEventListener('mouseup', handleMouseUp);
+    
+      // Return the subtask's taskvis and taskdurationRow
+      return {
+        taskvis: subtaskVis,
+        taskdurationRow: subtaskDurationRow,
+      };
+    }
+    
+
+    function addSubtask() {
+      if (selectedTaskIndex === null) {
+        alert('Please select a task before adding a subtask.');
+        return;
+      }
+    
+      const parentTask = todos[selectedTaskIndex];
+      const taskVisData = taskvisMap.get(selectedTaskIndex);
+    
+      if (!taskVisData) {
+        console.error('Unable to find task duration row for the selected task index:', selectedTaskIndex);
+        return;
+      }
+    
+      const parentTaskDurationRow = taskVisData.taskdurationRow;
+    
+      const subtask = {
+        wbs: parentTask.wbs + '.1', // Modify this to assign the correct WBS number for the subtask
+        taskName: 'Subtask', // Modify this to get the subtask name from an input field
+        duration: 1, // Modify this to get the subtask duration from an input field
+        start: parentTask.start, // Modify this to get the subtask start date from an input field
+        finish: parentTask.finish // Modify this to get the subtask finish date from an input field
+      };
+    
+      // Add the subtask to the todos array
+      todos.splice(selectedTaskIndex + 1, 0, subtask);
+    
+      // Add the subtask duration row
+      const subtaskVisData = addSubtaskDurationRow(parentTaskDurationRow, subtask);
+    
+      // Update the taskvisMap for the newly added subtask and subsequent tasks
+      for (let i = selectedTaskIndex + 1; i < todos.length; i++) {
+        const oldTaskVisData = taskvisMap.get(i);
+        if (oldTaskVisData) {
+          taskvisMap.set(i + 1, oldTaskVisData);
+        }
+      }
+    
+      // Add the subtask's taskvis data to the taskvisMap
+      taskvisMap.set(selectedTaskIndex + 1, subtaskVisData);
+    
+      // Re-render the table with the updated task data
+      renderTodos();
+    }
+    
+    
+    
     const weeksDiv = document.querySelector('.weeks');
 
 for (let i = 1; i <= 52; i++) {
@@ -235,3 +336,4 @@ function getDayOfYear(date) {
 }
 
 const date = new Date();
+
