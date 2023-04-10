@@ -272,11 +272,13 @@ const todoList = document.getElementById('todo-list');
       }
     
       const parentTaskDurationRow = taskVisData.taskdurationRow;
+      const durationInMilliseconds = subTaskFinishDate - subTaskStartDate;
+      const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
     
       const subtask = {
         wbs: parentTask.wbs + '.1', // Modify this to assign the correct WBS number for the subtask
         taskName: 'Subtask', // Modify this to get the subtask name from an input field
-        duration: 1, // Modify this to get the subtask duration from an input field
+        duration: durationInDays, // Modify this to get the subtask duration from an input field
         start: subStartInput.value, // Use the value from the subtask start input field
         finish: subFinishInput.value // Modify this to get the subtask finish date from an input field
       };
