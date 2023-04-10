@@ -237,6 +237,8 @@ const todoList = document.getElementById('todo-list');
       };
     }
     
+    const subStartInput = document.getElementById('sub-start-input');
+    const subFinishInput = document.getElementById('sub-finish-input');
 
     function addSubtask() {
       if (selectedTaskIndex === null) {
@@ -245,6 +247,23 @@ const todoList = document.getElementById('todo-list');
       }
     
       const parentTask = todos[selectedTaskIndex];
+      const parentTaskStartDate = new Date(parentTask.start);
+      const subTaskStartDate = new Date(subStartInput.value);
+    
+      if (subTaskStartDate < parentTaskStartDate) {
+        alert("Subtask start date cannot be before its parent task's start date.");
+        return;
+      }
+
+      const parentTaskFinishDate = new Date(parentTask.finish);
+      const subTaskFinishDate = new Date(subFinishInput.value);
+
+      if (subTaskFinishDate > parentTaskFinishDate) {
+        alert("Subtask finish date cannot be after its parent task's finish date.");
+        return;
+      }
+
+
       const taskVisData = taskvisMap.get(selectedTaskIndex);
     
       if (!taskVisData) {
@@ -258,8 +277,8 @@ const todoList = document.getElementById('todo-list');
         wbs: parentTask.wbs + '.1', // Modify this to assign the correct WBS number for the subtask
         taskName: 'Subtask', // Modify this to get the subtask name from an input field
         duration: 1, // Modify this to get the subtask duration from an input field
-        start: parentTask.start, // Modify this to get the subtask start date from an input field
-        finish: parentTask.finish // Modify this to get the subtask finish date from an input field
+        start: subStartInput.value, // Use the value from the subtask start input field
+        finish: subFinishInput.value // Modify this to get the subtask finish date from an input field
       };
     
       // Add the subtask to the todos array
