@@ -91,7 +91,6 @@ const todoList = document.getElementById('todo-list');
           return;
         }
     
-        // Update the start and finish dates for the task
         const task = todos[taskIndex];
         const newStartDate = new Date(task.start);
         const dayNumber = getDayOfYear(newStartDate);
@@ -100,6 +99,19 @@ const todoList = document.getElementById('todo-list');
     
         const newFinishDate = new Date(task.finish);
         newFinishDate.setDate(newFinishDate.getDate() - (dist - distDays));
+    
+        // Check if the task is a subtask
+        if (task.wbs.includes('.')) {
+          const parentWbs = task.wbs.split('.').slice(0, -1).join('.');
+          const parentTask = todos.find((t) => t.wbs === parentWbs);
+    
+          if (newStartDate < new Date(parentTask.start)) {
+            alert("The start date of a subtask can't be before the start of its parent task.");
+            isMouseDown = false;
+            currentDraggable = null;
+            return;
+          }
+        }
     
         task.start = newStartDate.toISOString().split('T')[0];
         task.finish = newFinishDate.toISOString().split('T')[0];
@@ -111,7 +123,6 @@ const todoList = document.getElementById('todo-list');
         currentDraggable = null;
       }
     }    
-    
 
     function pxToRem(pixels) {
       const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
