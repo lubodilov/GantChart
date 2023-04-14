@@ -250,7 +250,7 @@ const todoList = document.getElementById('todo-list');
     
     const subStartInput = document.getElementById('sub-start-input');
     const subFinishInput = document.getElementById('sub-finish-input');
-    const subTaskInput = document.getElementById('sub-task-input');
+    const subTaskInput = document.getElementById('subtask-input');
 
     function addSubtask() {
       if (selectedTaskIndex === null) {
@@ -315,7 +315,6 @@ const todoList = document.getElementById('todo-list');
       // Re-render the table with the updated task data
       renderTodos();
     }
-    
     
     
     const weeksDiv = document.querySelector('.weeks');
