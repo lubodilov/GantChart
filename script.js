@@ -250,6 +250,7 @@ const todoList = document.getElementById('todo-list');
     
     const subStartInput = document.getElementById('sub-start-input');
     const subFinishInput = document.getElementById('sub-finish-input');
+    const subTaskInput = document.getElementById('sub-task-input');
 
     function addSubtask() {
       if (selectedTaskIndex === null) {
@@ -287,11 +288,11 @@ const todoList = document.getElementById('todo-list');
       const durationInDays = Math.ceil(durationInMilliseconds / (1000 * 60 * 60 * 24));
     
       const subtask = {
-        wbs: parentTask.wbs + '.1', // Modify this to assign the correct WBS number for the subtask
-        taskName: 'Subtask', // Modify this to get the subtask name from an input field
-        duration: durationInDays, // Modify this to get the subtask duration from an input field
-        start: subStartInput.value, // Use the value from the subtask start input field
-        finish: subFinishInput.value // Modify this to get the subtask finish date from an input field
+        wbs: parentTask.wbs + '.1', 
+        taskName: subTaskInput.value, 
+        duration: durationInDays, 
+        start: subStartInput.value, 
+        finish: subFinishInput.value 
       };
     
       // Add the subtask to the todos array
