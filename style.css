@@ -135,6 +135,9 @@ th {
 .selected {
   background-color: #f0f0f0;
 }
+.subselected {
+  background-color: #d504e8; /* or any other style you prefer */
+}
 .ganttop{
   height: 3.2rem;
   width: 100%;

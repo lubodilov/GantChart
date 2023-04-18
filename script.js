@@ -42,7 +42,7 @@ const todoList = document.getElementById('todo-list');
       taskvis.style.height = '70%';
       taskvis.style.width = `${3.645 * durationInDays / 7}rem`; 
       taskvis.style.position = 'relative';
-      taskvis.style.left = `${(dayNumber+7) * 3.645 / 7}rem`;
+      taskvis.style.left = `${(dayNumber) * 3.645 / 7}rem`;
       taskvis.style.cursor = 'pointer';
       taskdurationRow.appendChild(taskvis);
   
@@ -193,6 +193,22 @@ const todoList = document.getElementById('todo-list');
           if (selectedTaskIndex !== null) {
             todoList.children[selectedTaskIndex].classList.remove('selected');
           }
+          if (todo.wbs.includes('.')) {
+            // Toggle the selection of the current subtask
+            if (selectedSubtasks.includes(index)) {
+              selectedSubtasks = selectedSubtasks.filter((i) => i !== index);
+              row.classList.remove('subselected');
+            } else {
+              selectedSubtasks.push(index);
+              row.classList.add('subselected');
+            }
+        
+            // Limit the number of selected subtasks to 2
+            if (selectedSubtasks.length > 2) {
+              const firstSelectedIndex = selectedSubtasks.shift();
+              todoList.children[firstSelectedIndex].classList.remove('subselected');
+            }
+          }
     
           // Select the current task and highlight the row
           selectedTaskIndex = index;
@@ -233,7 +249,7 @@ const todoList = document.getElementById('todo-list');
       subtaskVis.style.height = '70%';
       subtaskVis.style.width = `${3.645 * durationInDays / 7}rem`; // Calculate the width based on the subtask duration
       subtaskVis.style.position = 'relative';
-      subtaskVis.style.left = `${(dayNumber + 7) * 3.645 / 7}rem`;
+      subtaskVis.style.left = `${(dayNumber) * 3.645 / 7}rem`;
       subtaskVis.style.cursor = 'pointer';
       subtaskDurationRow.appendChild(subtaskVis);
     
@@ -315,8 +331,48 @@ const todoList = document.getElementById('todo-list');
       // Re-render the table with the updated task data
       renderTodos();
     }
+
+    let selectedSubtasks = [];
+
+    function mergeSubtasks() {
+      if (selectedSubtasks.length !== 2) {
+        alert('Please select exactly two subtasks to merge.');
+        return;
+      }
     
+      const firstSubtask = todos[selectedSubtasks[0]];
+      const secondSubtask = todos[selectedSubtasks[1]];
     
+      // Update the start date of the second subtask
+      const newStartDate = new Date(firstSubtask.finish);
+      newStartDate.setDate(newStartDate.getDate() + 1);
+      secondSubtask.start = newStartDate.toISOString().split('T')[0];
+
+      const newFinishDate = new Date(secondSubtask.start);
+      newFinishDate.setDate(newFinishDate.getDate() + secondSubtask.duration - 1);
+      secondSubtask.finish = newFinishDate.toISOString().split('T')[0];
+    
+      const secondSubtaskVisData = taskvisMap.get(selectedSubtasks[1]);
+      if (secondSubtaskVisData) {
+        const dayNumber = getDayOfYear(new Date(secondSubtask.start));
+        secondSubtaskVisData.taskvis.style.left = `${(dayNumber) * 3.645 / 7}rem`;
+      } else {
+        console.error('Unable to find taskvis data for the second subtask index:', selectedSubtasks[1]);
+      }
+      
+      // Re-render the table with the updated task data
+      renderTodos();
+    
+      // Deselect the subtasks and clear the selectedSubtasks array
+      selectedSubtasks.forEach((index) => {
+        todoList.children[index].classList.remove('selected');
+      });
+      selectedSubtasks = [];
+    }
+
+    const mergeButton = document.getElementById('mergeButton');
+    mergeButton.addEventListener('click', mergeSubtasks);
+
     const weeksDiv = document.querySelector('.weeks');
 
 for (let i = 1; i <= 52; i++) {
