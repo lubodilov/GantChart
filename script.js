@@ -38,12 +38,16 @@ const todoList = document.getElementById('todo-list');
       // Create the taskvis div and assign the event listeners for dragging
       const taskvis = document.createElement('div');
       taskvis.textContent = ``;
-      taskvis.style.backgroundColor = 'blue';
+      taskvis.style.backgroundColor = 'black';
       taskvis.style.height = '70%';
       taskvis.style.width = `${3.645 * durationInDays / 7}rem`; 
       taskvis.style.position = 'relative';
       taskvis.style.left = `${(dayNumber) * 3.645 / 7}rem`;
       taskvis.style.cursor = 'pointer';
+      const leftTriangle = createTriangle('left');
+      const rightTriangle = createTriangle('right');
+      taskvis.appendChild(leftTriangle);
+      taskvis.appendChild(rightTriangle);
       taskdurationRow.appendChild(taskvis);
   
       taskvis.addEventListener('mousedown', handleMouseDown);
@@ -60,6 +64,21 @@ const todoList = document.getElementById('todo-list');
 			resetInputs();
 
 		}
+
+    function createTriangle(direction) {
+      const triangle = document.createElement('div');
+      triangle.style.width = '0';
+      triangle.style.height = '0';
+      triangle.style.borderStyle = 'solid';
+      triangle.style.borderWidth = direction === 'left' ? '1.47rem 0.87rem 1.47rem 0' : '1.47rem 0 1.47rem 0.87rem';
+      triangle.style.borderColor = direction === 'left' ? 'transparent white transparent transparent' : 'transparent transparent transparent white';
+      triangle.style.position = 'absolute';
+      triangle.style.top = '50%';
+      triangle.style.transform = 'translateY(-50%)';
+      triangle.style[direction] = '0';
+      return triangle;
+    }
+    
 
     let isMouseDown = false;
     let offsetX;
@@ -122,7 +141,7 @@ const todoList = document.getElementById('todo-list');
         isMouseDown = false;
         currentDraggable = null;
       }
-    }    
+    }  
 
     function pxToRem(pixels) {
       const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -245,7 +264,7 @@ const todoList = document.getElementById('todo-list');
 
       const subtaskVis = document.createElement('div');
       subtaskVis.textContent = '';
-      subtaskVis.style.backgroundColor = 'green';
+      subtaskVis.style.backgroundColor = 'blue';
       subtaskVis.style.height = '70%';
       subtaskVis.style.width = `${3.645 * durationInDays / 7}rem`; // Calculate the width based on the subtask duration
       subtaskVis.style.position = 'relative';
