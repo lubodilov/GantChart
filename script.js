@@ -118,7 +118,7 @@ const todoList = document.getElementById('todo-list');
     
         const newFinishDate = new Date(task.finish);
         newFinishDate.setDate(newFinishDate.getDate() - (dist - distDays));
-    
+        
         // Check if the task is a subtask
         if (task.wbs.includes('.')) {
           const parentWbs = task.wbs.split('.').slice(0, -1).join('.');
@@ -126,6 +126,8 @@ const todoList = document.getElementById('todo-list');
     
           if (newStartDate < new Date(parentTask.start)) {
             alert("The start date of a subtask can't be before the start of its parent task.");
+            //parentTask.start = newStartDate.toISOString().split('T')[0];
+            //parentTask.finish = newFinishDate.toISOString().split('T')[0];
             isMouseDown = false;
             currentDraggable = null;
             return;
