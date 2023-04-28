@@ -393,7 +393,64 @@ const todoList = document.getElementById('todo-list');
 
     const mergeButton = document.getElementById('mergeButton');
     mergeButton.addEventListener('click', mergeSubtasks);
-
+    
+    function calculateMainTasks() {
+      todos.forEach((mainTask, mainTaskIndex) => {
+        if (!mainTask.wbs.includes('.')) {
+          let earliestStart;
+          let latestFinish;
+    
+          todos.forEach((subtask, subtaskIndex) => {
+            if (subtask.wbs.startsWith(mainTask.wbs + '.')) {
+              const subtaskStart = new Date(subtask.start);
+              const subtaskFinish = new Date(subtask.finish);
+    
+              if (!earliestStart || subtaskStart < earliestStart) {
+                earliestStart = subtaskStart;
+              }
+              if (!latestFinish || subtaskFinish > latestFinish) {
+                latestFinish = subtaskFinish;
+              }
+            }
+          });
+    
+          mainTask.start = earliestStart.toISOString().split('T')[0];
+          mainTask.finish = latestFinish.toISOString().split('T')[0];
+    
+          const mainTaskDurationInDays = Math.ceil((latestFinish - earliestStart) / (1000 * 60 * 60 * 24));
+          const mainTaskVisData = taskvisMap.get(mainTaskIndex);
+    
+          if (mainTaskVisData) {
+            const dayNumber = getDayOfYear(earliestStart);
+            mainTaskVisData.taskvis.style.width = `${3.645 * mainTaskDurationInDays / 7}rem`;
+            mainTaskVisData.taskvis.style.left = `${(dayNumber) * 3.645 / 7}rem`;
+          } else {
+            console.error('Unable to find taskvis data for the main task index:', mainTaskIndex);
+          }
+        }
+      });
+    
+      // Re-render the table with the updated task data
+      renderTodos();
+    }
+    
+    const calculateButton = document.getElementById('calculateButton');
+    calculateButton.addEventListener('click', calculateMainTasks);
+    
+    
+    function logFirstTaskStartFinish() {
+      console.log("First Task Start:", todos[0].start);
+      console.log("First Task Finish:", todos[0].finish);
+    }
+    
+    // Add the event listener to the document
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "p" || event.key === "P") {
+        calculateMainTasks();
+        logFirstTaskStartFinish();
+      }
+    });
+    
     const weeksDiv = document.querySelector('.weeks');
 
 for (let i = 1; i <= 52; i++) {
